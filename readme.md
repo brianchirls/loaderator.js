@@ -4,12 +4,6 @@ Rich HTML[5] pages often require a number of different resources to load before 
 
 **loaderator.js** is designed to make asynchronous loading scripts and media easy and fast, encouraging responsive user experiences.
 
-Requirements
--------------
-**loaderator.js** assumes it is running in a browser environment and may not work in a server or command-line program.  It has not been tested thoroughly, but it should at least work in recent versions of Firefox and Webkit.
-
-No external libraries are required.
-
 Features
 --------
 * Entirely event-based, never using `setTimeout` or `setInterval` (unless there is no other way)
@@ -23,6 +17,12 @@ Features
 	- *Fonts*: Wraps Google's [WebFont Loader](http://code.google.com/apis/webfonts/docs/webfont_loader.html). Great for fighting against the ["Flash of Unstyled Text"](http://paulirish.com/2009/fighting-the-font-face-fout/ "Fighting the @font-face FOUT")
 * Checks for duplicates to avoid loading a given resource more than once (resolving relative URLs)
 * Makes it unnecessary to load any scripts in `head`, even this one
+
+Requirements
+-------------
+**loaderator.js** assumes it is running in a browser environment and may not work in a server or command-line program.  It has not been tested thoroughly, but it should at least work in recent versions of Firefox and Webkit.
+
+No external libraries are required.
 
 Usage
 --------

@@ -1,4 +1,3 @@
-//stuff up at the top
 var _ldr8r_helper;
 
 if (window.console === undefined) {

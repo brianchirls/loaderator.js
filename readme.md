@@ -12,7 +12,7 @@ Features
 * handles the following methods of loading resources:
 	- `<script>`: Add resource to document `head` as a script, allowing for Javascript and JSONP, even cross-domain
 	- *Cascading Style Sheets*: Load external CSS file a `<link>` element
-	- *AJAX*: 
+	- *AJAX*: Load just about any non-binary file using XMLHttpRequest (e.g. text, xml, json).  Subject to cross-domain security restrictions, depending on server configuration.
 	- *DOM Elements*: Creates the appropriate element based on resource type (images, audio, video, iframe), allowing for type-specific properties and methods (e.g. triggering load events for media on `canplay`, rather than waiting for the entire file)
 	- *Fonts*: Wraps Google's [WebFont Loader](http://code.google.com/apis/webfonts/docs/webfont_loader.html). Great for fighting against the ["Flash of Unstyled Text"](http://paulirish.com/2009/fighting-the-font-face-fout/ "Fighting the @font-face FOUT")
 * Checks for duplicates to avoid loading a given resource more than once (resolving relative URLs)

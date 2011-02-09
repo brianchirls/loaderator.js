@@ -6,17 +6,17 @@ Rich HTML[5] pages often require a number of different resources to load before 
 
 Features
 --------
-* Entirely event-based, never using `setTimeout` or `setInterval` (unless there is no other way)
-* Event listeners for individual resources, groups of resources or for everything.
-* Automatically detects/guesses the type of resource and best method of loading from file extension, unless specified
-* handles the following methods of loading resources:
-	- `<script>`: Add resource to document `head` as a script, allowing for Javascript and JSONP, even cross-domain
+* Handles the following methods of loading resources:
+	- `<script>`: Add resource to document `<head>` as a script, allowing for Javascript and [JSONP](http://en.wikipedia.org/wiki/JSON#JSONP "JSON with Padding"), even cross-domain
 	- *Cascading Style Sheets*: Load external CSS file a `<link>` element
 	- *AJAX*: Load just about any non-binary file using XMLHttpRequest (e.g. text, xml, json).  Subject to cross-domain security restrictions, depending on server configuration.
 	- *DOM Elements*: Creates the appropriate element based on resource type (images, audio, video, iframe), allowing for type-specific properties and methods (e.g. triggering load events for media on `canplay`, rather than waiting for the entire file)
-	- *Fonts*: Wraps Google's [WebFont Loader](http://code.google.com/apis/webfonts/docs/webfont_loader.html). Great for fighting against the ["Flash of Unstyled Text"](http://paulirish.com/2009/fighting-the-font-face-fout/ "Fighting the @font-face FOUT")
+	- *Fonts*: Wraps Google's [WebFont Loader](http://code.google.com/apis/webfonts/docs/webfont_loader.html). Great for avoiding the ["Flash of Unstyled Text"](http://paulirish.com/2009/fighting-the-font-face-fout/ "Fighting the @font-face FOUT")
+* Entirely event-based, never using `setTimeout` or `setInterval` (unless there is no other way)
+* Event listeners for individual resources, groups of resources or for everything.
+* Automatically detects/guesses the type of resource and best method of loading from file extension, unless specified
 * Checks for duplicates to avoid loading a given resource more than once (resolving relative URLs)
-* Makes it unnecessary to load any scripts in `head`, even this one
+* Makes it unnecessary to load any scripts in `<head>`, even this one
 
 Requirements
 -------------

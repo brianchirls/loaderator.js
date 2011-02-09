@@ -30,9 +30,7 @@ Coming soon...
 
 License
 -------
-Coming soon.  Suggestions?
-
-For now, use it non-commercially but don't distribute it without linking back here.  No warranties or guarantees.
+Licensed under the MIT license: <http://www.opensource.org/licenses/mit-license.php>
 
 Warning
 --------

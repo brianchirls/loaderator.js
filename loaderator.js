@@ -43,6 +43,8 @@ if (console === undefined) {
 	};
 }
 
+var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[a-zA-Z0-9\&amp;%_\.\/\-~]*)?(\#[a-zA-Z0-9\-_]*)?$/;
+
 function Loaderator(resource, category, listener) {
 	this.categories = {};
 	this.resources = {};
@@ -107,8 +109,6 @@ Loaderator.prototype.setBase = function(href) {
 	var bases = document.getElementsByTagName('base');
 	var base;
 
-	var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[a-zA-Z0-9\&amp;%_\.\/-~-]*)?(\#[a-zA-Z0-9\-_]*)?$/;
-
 	this.base = null;
 	if (href) {
 		if (matches = urlRegex.exec(href)) {
@@ -150,7 +150,6 @@ Loaderator.prototype.setBase = function(href) {
 }
 
 Loaderator.prototype.resolveUrl = function(url) {
-	var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[a-zA-Z0-9\&amp;%_\.\/-~-]*)?(\#[a-zA-Z0-9\-_]*)?$/;
 	var matches;
 	if (!this.base) {
 		this.setBase();

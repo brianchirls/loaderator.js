@@ -33,6 +33,7 @@
 
 var _ldr8r_helper;
 
+var document = window.document;
 var console = window.console;
 if (console === undefined) {
 	console = {
@@ -92,13 +93,18 @@ Loaderator.Category.prototype.checkForAllLoaded = function() {
 		if (!resources[i].loaded) { return; }
 	}
 	
+	//I'm not sure if this is useful at all.  The whole listener.async thing might be removed
+	var makeTimeoutCallback = function(listener, loader, resources) {
+		return function() {
+			listener.call(loader,resources);
+		};
+	};
+	
 	var listener;
 	for (j--; j >= 0; j--) {
 		listener = listeners.pop();
 		if (listener.async) {
-			setTimeout(function() {
-				listener.call(this.loader,this.resources);
-			}, 0);
+			setTimeout(makeTimeoutCallback(listener, this.loader,this.resources), 0);
 		} else {
 			listener.call(this.loader,this.resources);
 		}
@@ -108,6 +114,8 @@ Loaderator.Category.prototype.checkForAllLoaded = function() {
 Loaderator.prototype.setBase = function(href) {
 	var bases = document.getElementsByTagName('base');
 	var base;
+	var i;
+	var matches;
 
 	this.base = null;
 	if (href) {
@@ -120,7 +128,7 @@ Loaderator.prototype.setBase = function(href) {
 			this.base.pathname = matches[8];
 		}
 	} else {
-		for (var i = 0; i < bases.length; i++) {
+		for (i = 0; i < bases.length; i++) {
 			base = bases.item(i);
 			if (href = base.getAttribute('href')) {
 				if (matches = urlRegex.exec(href)) {
@@ -147,10 +155,9 @@ Loaderator.prototype.setBase = function(href) {
 	pathArray = pathArray[0].split('/');
 	pathArray.pop();
 	this.base.directory = pathArray.join('/');
-}
+};
 
 Loaderator.prototype.resolveUrl = function(url) {
-	var matches;
 	if (!this.base) {
 		this.setBase();
 	}
@@ -162,26 +169,20 @@ Loaderator.prototype.resolveUrl = function(url) {
 	var base = this.base;
 	var urlSplit = url.split('/');
 	
-	if (urlSplit.length && urlSplit[0] =='' ) {
+	if (urlSplit.length && urlSplit[0] === '' ) {
 		return base.protocol + '//' + base.host + url;
 	}
 	
 	var dir = base.directory.split('/');
 	var i;
 	for (i = 0; i < urlSplit.length; i++) {
-		if (urlSplit[i] == '..') {
+		if (urlSplit[i] === '..') {
 			dir.pop();
-		} else if (urlSplit[i] == '.') {
-			//do nothing
-		} else {
+		} else if (urlSplit[i] !== '.') { //do nothing if directory specified is '.'
 			dir.push(urlSplit[i]);
 		}
 	}
 	return base.protocol + '//' + base.host + dir.join('/');
-
-	//todo: throw error
-	console.log('unknown URL format');
-	return false;
 };
 
 Loaderator.prototype.loaders = {
@@ -197,14 +198,14 @@ Loaderator.prototype.loaders = {
 			this._head.appendChild(script);
 		}
 		resource.element.onreadystatechange= function () {
-			if (this.readyState == 'complete' || this.readyState == 4){
+			if (this.readyState === 'complete' || this.readyState === 4){
 				if (!resource.loaded) {
 					that.resLoadCallback(resource, this);
 				}
 			} else {
 				console.log('script readystate = ' + this.readyState + ' - ' + resource.fullUrl);
 			}
-		}
+		};
 		resource.element.onload= function() {
 			if (!resource.loaded) {
 				that.resLoadCallback(resource, this);
@@ -223,10 +224,10 @@ Loaderator.prototype.loaders = {
 			resource.element = link;
 			this._head.appendChild(link);
 			resource.element.onreadystatechange= function () {
-				if (this.readyState == 'complete' || this.readyState == 4){
+				if (this.readyState === 'complete' || this.readyState === 4){
 					that.resLoadCallback(resource, this);
 				}
-			}
+			};
 			resource.element.onload= function() {
 				that.resLoadCallback(resource, this);
 			};
@@ -242,7 +243,7 @@ Loaderator.prototype.loaders = {
 			//todo: allow for post, username/password, etc
 			xmlhttp.open("GET",resource.fullUrl,true);
 			xmlhttp.onreadystatechange = function() {
-				if (xmlhttp.readyState == 4) {
+				if (xmlhttp.readyState === 4) {
 					that.resLoadCallback(resource, this);
 				}
 			};
@@ -253,6 +254,7 @@ Loaderator.prototype.loaders = {
 	object: function(resource) {
 		var obj;
 		var that = this;
+		var i;
 		if (!resource.element) {
 			switch (resource.type) {
 				//todo: allow multiple 'source' urls for audio and video
@@ -266,10 +268,10 @@ Loaderator.prototype.loaders = {
 					obj.doMediaEvents = true;
 					obj.id = resource.id || resource.categories[0].name + '-' + resource.categories[0].resources.length;
 					if (resource.sources) {
-						if (!(Object.prototype.toString.call(resource.sources) === '[object Array]')) {
+						if (Object.prototype.toString.call(resource.sources) !== '[object Array]') {
 							resource.sources = [resource.sources];
 						}
-						for (var i = 0; i < resource.sources.length; i++) {
+						for (i = 0; i < resource.sources.length; i++) {
 							var source = document.createElement('source');
 							source.src = this.resolveUrl(resource.sources[i]);
 							obj.appendChild(source);
@@ -295,7 +297,7 @@ Loaderator.prototype.loaders = {
 					//todo: throw error?  or at least a warning
 					console.log('Resource Loader: unknown object type ' + resource.type);
 					return false;
-			};
+			}
 			resource.element = obj;
 			if (!obj.doMediaEvents) {
 				obj.onload = function(event) {
@@ -326,6 +328,7 @@ Loaderator.prototype.loaders = {
 		},'webfont');
 		_ldr8r_helper.addEventListener('webfont',function() {
 			console.log('Loaded WebFont trying ' + resource.fullUrl);
+			var i;
 			var familiesToLoad = resource.families.concat([]);
 			console.log(familiesToLoad);
 			WebFont.load({
@@ -335,8 +338,8 @@ Loaderator.prototype.loaders = {
 				},
 				fontactive: function(familyName, fvd) {
 					console.log('fontactive:' + familyName);
-					for (var i = 0; i < familiesToLoad.length; i++) {
-						if (familiesToLoad[i] == familyName) {
+					for (i = 0; i < familiesToLoad.length; i++) {
+						if (familiesToLoad[i] === familyName) {
 							familiesToLoad.splice(i,1);
 							break;
 						}
@@ -393,8 +396,10 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	var resources;
 	if (Object.prototype.toString.call(resource) === '[object Array]') {
 		resources = resource;
-	} else {
+	} else if (resource) {
 		resources = [resource];
+	} else {
+		return;
 	}
 	
 	var res, thisResource, catName, cat;
@@ -402,80 +407,82 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	var returnResources = [];
 	for (i = 0; i < resources.length; i++) {
 		res = resources[i];
-		if (!res) continue;
-		if (Object.prototype.toString.call(res) === '[object String]' || typeof res === 'string') {
-			res = {
-				url: res
-			};
-		}
-		
-		if (res.url) {
-			var fullUrl;
-			if (res.fullUrl === undefined) {
-				fullUrl = this.resolveUrl(res.url);
+		if (res) {
+			if (Object.prototype.toString.call(res) === '[object String]' || typeof res === 'string') {
+				res = {
+					url: res
+				};
 			}
-			if (thisResource = this.resources[fullUrl]) {
-				//this resource already exists.  no duplicates
-				resources[i] = thisResource;
-				
-				//todo: if new resource specifies preload, then go back in to the existing element and pre-load it
-			} else {
-				//this is a new resource
-				thisResource = res;
-				thisResource.Loaderator = this;
-				this.resources[fullUrl] = thisResource;
-				thisResource.fullUrl = fullUrl;
-
-				if (!res.type) {
-					//try to guess type based on file extension
-					var extension = res.fullUrl.split('.');
-					if (extension.length > 1) {
-						extension = extension.pop().toLowerCase();
+			
+			if (res.url) {
+				var fullUrl;
+				if (res.fullUrl === undefined) {
+					fullUrl = this.resolveUrl(res.url);
+				}
+				if (thisResource = this.resources[fullUrl]) {
+					//this resource already exists.  no duplicates
+					resources[i] = thisResource;
+					
+					//todo: if new resource specifies preload, then go back in to the existing element and pre-load it
+				} else {
+					//this is a new resource
+					thisResource = res;
+					thisResource.Loaderator = this;
+					this.resources[fullUrl] = thisResource;
+					thisResource.fullUrl = fullUrl;
+	
+					if (!res.type) {
+						//try to guess type based on file extension
+						var extension = res.fullUrl.split('.');
+						if (extension.length > 1) {
+							extension = extension.pop().toLowerCase();
+						}
+						
+						//todo: is it faster to put this in a switch?
+						res.type = this.extensionTypes[extension] || 'text';
 					}
 					
-					//todo: is it faster to put this in a switch?
-					res.type = this.extensionTypes[extension] || 'text';
-				}
-				
-				if (!res.mode) {
-					//try to guess mode based on type
-					switch(res.type) {
-						case 'script':
-							res.mode = 'script'; break;
-						case 'css':
-							res.mode = 'css'; break;
-						case 'audio':
-						case 'video':
-						case 'image':
-						case 'html':
-							res.mode = 'object'; break;
-						case 'xml':
-						case 'json':
-						case 'text':
-						default:
-							res.mode = 'ajax'; break;
+					if (!res.mode) {
+						//try to guess mode based on type
+						switch(res.type) {
+							case 'script':
+								res.mode = 'script'; break;
+							case 'css':
+								res.mode = 'css'; break;
+							case 'audio':
+							case 'video':
+							case 'image':
+							case 'html':
+								res.mode = 'object'; break;
+							case 'xml':
+							case 'json':
+							case 'text':
+								res.mode = 'ajax'; break;
+							default:
+								res.mode = 'ajax';
+						}
 					}
 				}
+			} else if (res.loader) {
+				thisResource = res;
 			}
-		} else if (res.loader) {
-			thisResource = res;
-		}
-
-		catName = category || res.category || thisResource.fullUrl;
-		if (!catName) continue;
-				
-		//set up category if it hasn't been set up yet
-		cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
-		if (thisResource.categories === undefined) { thisResource.categories = []; }
-		thisResource.categories.push(cat);
-		cat.addResource(thisResource);
-
-		if (thisResource.loader) {
-			//use provided loader function
-		} else if (thisResource.fullUrl) {
-			console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
-			if (this.loaders[thisResource.mode].call(this, thisResource)) {
-				returnResources.push(thisResource);
+	
+			catName = category || res.category || thisResource.fullUrl;
+			if (catName) {
+				//set up category if it hasn't been set up yet
+				cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
+				if (thisResource.categories === undefined) { thisResource.categories = []; }
+				thisResource.categories.push(cat);
+				cat.addResource(thisResource);
+		
+				if (thisResource.loader) {
+					//todo: use provided loader function
+				} else if (thisResource.fullUrl) {
+					console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
+					if (this.loaders[thisResource.mode].call(this, thisResource)) {
+						returnResources.push(thisResource);
+					}
+				}
 			}
 		}
 	}
@@ -499,24 +506,29 @@ Loaderator.prototype.resLoadCallback = function(resource, event) {
 		//todo: figure out what to do about 'this' for event listener
 		this.eventListeners[i].call(this,resource);
 	}
+
+	//I'm not sure if this is useful at all.  The whole listener.async thing might be removed
+	var makeTimeoutCallback = function(listener, loader, resource) {
+		return function() {
+			listener.call(loader,resource);
+		};
+	};
 	
 	//next fire any single-resource events for this resource
 	len = resource.categories.length;
 	var listeners;
 	for (i = 0; i < len; i++) {
-		var catListeners, cat;
+		var catListeners, cat, c, l;
 		cat = resource.categories[i];
-		for (var c = 0; c < len; c++) {
+		for (c = 0; c < len; c++) {
 			catListeners = cat.eventListeners.single;
-			if (resource.id && (listeners = catListeners[resource.id]) ||
+			if ( (resource.id && (listeners = catListeners[resource.id])) ||
 				(listeners = catListeners[resource.url]) ||
 				(listeners = catListeners[resource.fullUrl])) {
-				for (var l = 0; l < listeners.length; l++) {
+				for (l = 0; l < listeners.length; l++) {
 					var listener = listeners[l];
 					if (listener.async) {
-						setTimeout(function() {
-							listener.call(this,resource);
-						}, 0);
+						setTimeout(makeTimeoutCallback(listener, this,resource), 0);
 					} else {
 						listener.call(this,resource);
 					}
@@ -532,7 +544,7 @@ Loaderator.prototype.resLoadCallback = function(resource, event) {
 };
 
 Loaderator.prototype.addEventListener = function(event, listener, async) {
-	if (!listener || !(Object.prototype.toString.call(listener) === '[object Function]')) { return; }
+	if (!listener || Object.prototype.toString.call(listener) !== '[object Function]') { return; }
 	
 	var i;
 
@@ -594,7 +606,7 @@ var LoaderatorQueue = function(arg) {
 };
 
 LoaderatorQueue.prototype.push = function(fn) {
-	if (typeof fn == 'function') {
+	if (Object.prototype.toString.call(fn) === '[object Function]') {
 		var args = Array.prototype.slice.call(arguments,1);
 		fn.apply(null, args);
 	}
@@ -604,4 +616,4 @@ _ldr8r_helper = new Loaderator();
 
 window.LDR8R = new LoaderatorQueue();
 
-})(window);
+}(window));

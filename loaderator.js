@@ -29,10 +29,13 @@
  *  
  */
 
+(function( window, undefined ) {
+
 var _ldr8r_helper;
 
-if (window.console === undefined) {
-	window.console = {
+var console = window.console;
+if (console === undefined) {
+	console = {
 		log: function(s) {
 			
 			return;
@@ -49,6 +52,7 @@ function Loaderator(resource, category, listener) {
 		this.load(resource, category, listener);
 	}
 }
+window.Loaderator = Loaderator;
 
 Loaderator.Category = function(name, loader) {
 	this.name = name;
@@ -601,3 +605,5 @@ LoaderatorQueue.prototype.push = function(fn) {
 window.LDR8R = new LoaderatorQueue();
 
 _ldr8r_helper = new Loaderator();
+
+})(window);

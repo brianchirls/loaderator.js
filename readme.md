@@ -53,5 +53,5 @@ TO DO
 * For *ajax* mode, allow for methods other than `GET` and additional parameters (headers, security credentials, `POST` data, etc.)
 * <del>Make sure we're not using `instanceof`.</del> done.
 * JS Lint this whole mess and make sure it minifies nicely
-* Encapsulate it all in an anonymous function
+* <del>Encapsulate it all in an anonymous function.</del> done.
 * Build a test suite (little help, anyone?)

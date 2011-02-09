@@ -17,6 +17,7 @@ Features
 * Automatically detects/guesses the type of resource and best method of loading from file extension, unless specified
 * Checks for duplicates to avoid loading a given resource more than once (resolving relative URLs)
 * Makes it unnecessary to load any scripts in `<head>`, even this one
+* Small. ~18k, [minifies](http://compressorrater.thruhere.net/) to ~6k (Packer 3.1 shrink, base62, privateVars)
 
 Requirements
 -------------
@@ -52,6 +53,6 @@ TO DO
 * Separate out `console.log` calls into a debugging extension that can be turned on or off
 * For *ajax* mode, allow for methods other than `GET` and additional parameters (headers, security credentials, `POST` data, etc.)
 * <del>Make sure we're not using `instanceof`.</del> done.
-* JS Lint this whole mess and make sure it minifies nicely
+* <del>JS Lint this whole mess and make sure it minifies nicely</del> done, but on-going.
 * <del>Encapsulate it all in an anonymous function.</del> done.
 * Build a test suite (little help, anyone?)

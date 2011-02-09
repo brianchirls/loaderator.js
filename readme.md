@@ -39,7 +39,7 @@ None of this has been extensively tested, and the interface is subject to change
 TO DO
 --------
 * Change `require` to `load` so it makes more sense. or maybe `push`?
-* Add all CRUD features for all resources (create, remove, update, delete)
+* <del>Add all CRUD features for all resources (create, remove, update, delete)</del> On second thought, this seems unnecessary.
 * Pass constructor parameters to `require`.
 * Allow for addition of new `mode`s as plugins
 * Enable specification of event type for media objects

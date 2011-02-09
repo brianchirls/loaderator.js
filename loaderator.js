@@ -602,8 +602,8 @@ LoaderatorQueue.prototype.push = function(fn) {
 	}
 };
 
-window.LDR8R = new LoaderatorQueue();
-
 _ldr8r_helper = new Loaderator();
+
+window.LDR8R = new LoaderatorQueue();
 
 })(window);

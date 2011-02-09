@@ -104,7 +104,6 @@ Loaderator.Category.prototype.checkForAllLoaded = function() {
 };
 
 Loaderator.prototype.setBase = function(href) {
-	var href;
 	var bases = document.getElementsByTagName('base');
 	var base;
 

@@ -40,7 +40,7 @@ TO DO
 --------
 * <del>Change `require` to `load` so it makes more sense. or maybe `push`?</del> done.
 * <del>Add all CRUD features for all resources (create, remove, update, delete)</del> On second thought, this seems unnecessary.
-* Pass constructor parameters to `require`.
+* <del>Pass constructor parameters to `load`.</del> done.
 * Allow for addition of new `mode`s as plugins
 * Enable specification of event type for media objects
 * Add error handling for different types of failures, including retry-able (e.g. server timeout) and permanent (e.g. 404)

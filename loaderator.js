@@ -40,11 +40,14 @@ if (window.console === undefined) {
 	};
 }
 
-function Loaderator() {
+function Loaderator(resource, category, listener) {
 	this.categories = {};
 	this.resources = {};
 	this.eventListeners = [];
 	this._head = document.getElementsByTagName('head')[0];
+	if (resource) {
+		this.load(resource, category, listener);
+	}
 }
 
 Loaderator.Category = function(name, loader) {

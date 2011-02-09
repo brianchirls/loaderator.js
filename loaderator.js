@@ -313,7 +313,7 @@ Loaderator.prototype.loaders = {
 	},
 	font: function(resource) {
 		var that = this;
-		_ldr8r_helper.require({
+		_ldr8r_helper.load({
 			url: this.base.protocol + '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js',
 			id: 'webfont-script',
 			type: 'script',
@@ -384,7 +384,7 @@ Loaderator.prototype.extensionTypes = {
 	
 };
 
-Loaderator.prototype.require = function(resource, category, listener) {
+Loaderator.prototype.load = function(resource, category, listener) {
 	var resources;
 	if (resource instanceof Array) {
 		resources = resource;

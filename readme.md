@@ -51,7 +51,7 @@ TO DO
 * Clean up `LDR8R` and make it more elegant
 * Separate out `console.log` calls into a debugging extension that can be turned on or off
 * For *ajax* mode, allow for methods other than `GET` and additional parameters (headers, security credentials, `POST` data, etc.)
-* Make sure we're not using `instanceof`.
+* <del>Make sure we're not using `instanceof`.</del> done.
 * JS Lint this whole mess and make sure it minifies nicely
 * Encapsulate it all in an anonymous function
 * Build a test suite (little help, anyone?)

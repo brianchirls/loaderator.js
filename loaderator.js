@@ -264,7 +264,7 @@ Loaderator.prototype.loaders = {
 					obj.doMediaEvents = true;
 					obj.id = resource.id || resource.categories[0].name + '-' + resource.categories[0].resources.length;
 					if (resource.sources) {
-						if (!(resource.sources instanceof Array)) {
+						if (!(Object.prototype.toString.call(resource.sources) === '[object Array]')) {
 							resource.sources = [resource.sources];
 						}
 						for (var i = 0; i < resource.sources.length; i++) {
@@ -389,7 +389,7 @@ Loaderator.prototype.extensionTypes = {
 
 Loaderator.prototype.load = function(resource, category, listener) {
 	var resources;
-	if (resource instanceof Array) {
+	if (Object.prototype.toString.call(resource) === '[object Array]') {
 		resources = resource;
 	} else {
 		resources = [resource];
@@ -401,7 +401,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	for (i = 0; i < resources.length; i++) {
 		res = resources[i];
 		if (!res) continue;
-		if (res instanceof String || typeof res === 'string') {
+		if (Object.prototype.toString.call(res) === '[object String]' || typeof res === 'string') {
 			res = {
 				url: res
 			};
@@ -478,7 +478,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 		}
 	}
 	
-	if (listener !== undefined && listener instanceof Function && category !== undefined) {
+	if (listener !== undefined && Object.prototype.toString.call(listener) === '[object Function]' && category !== undefined) {
 		this.addEventListener(category, listener);
 	}
 	
@@ -530,7 +530,7 @@ Loaderator.prototype.resLoadCallback = function(resource, event) {
 };
 
 Loaderator.prototype.addEventListener = function(event, listener, async) {
-	if (!listener || !(listener instanceof Function)) { return; }
+	if (!listener || !(Object.prototype.toString.call(listener) === '[object Function]')) { return; }
 	
 	var i;
 

@@ -29,6 +29,8 @@ Usage
 --------
 Coming soon...
 
+For an axample, see <http://code.chirls.com/loaderator>
+
 License
 -------
 Licensed under the MIT license: <http://www.opensource.org/licenses/mit-license.php>

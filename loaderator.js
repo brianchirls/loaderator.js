@@ -197,7 +197,7 @@ Loaderator.prototype.loaders = {
 			script.src = resource.fullUrl;
 			this._head.appendChild(script);
 		}
-		resource.element.onreadystatechange= function () {
+		resource.element.onreadystatechange = function () {
 			if (this.readyState === 'complete' || this.readyState === 4){
 				if (!resource.loaded) {
 					that.resLoadCallback(resource, this);
@@ -206,11 +206,22 @@ Loaderator.prototype.loaders = {
 				console.log('script readystate = ' + this.readyState + ' - ' + resource.fullUrl);
 			}
 		};
-		resource.element.onload= function() {
+		resource.element.onload = function() {
 			if (!resource.loaded) {
 				that.resLoadCallback(resource, this);
 			}
 		};
+
+		/*
+		resource.element.oninvalid= function(arg) {
+			console.log('invalid: ' + resource.fullUrl);
+			console.log(arg);
+		}
+		resource.element.onerror= function(arg) {
+			console.log('error: ' + resource.fullUrl);
+			console.log(arg);
+		}
+		*/
 	},
 
 	css: function(resource) {

@@ -29,7 +29,7 @@ Usage
 --------
 Coming soon...
 
-For an axample, see <http://code.chirls.com/loaderator>
+For an example, see <http://code.chirls.com/loaderator/>
 
 License
 -------

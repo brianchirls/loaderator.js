@@ -155,6 +155,8 @@ Loaderator.prototype.setBase = function(href) {
 	pathArray = pathArray[0].split('/');
 	pathArray.pop();
 	this.base.directory = pathArray.join('/');
+
+	return this;
 };
 
 Loaderator.prototype.resolveUrl = function(url) {
@@ -410,7 +412,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	} else if (resource) {
 		resources = [resource];
 	} else {
-		return;
+		return this;
 	}
 	
 	var res, thisResource, catName, cat;
@@ -502,7 +504,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 		this.addEventListener(category, listener);
 	}
 	
-	return returnResources;
+	return this;
 };
 
 Loaderator.prototype.resLoadCallback = function(resource, event) {
@@ -555,7 +557,7 @@ Loaderator.prototype.resLoadCallback = function(resource, event) {
 };
 
 Loaderator.prototype.addEventListener = function(event, listener, async) {
-	if (!listener || Object.prototype.toString.call(listener) !== '[object Function]') { return; }
+	if (!listener || Object.prototype.toString.call(listener) !== '[object Function]') { return this; }
 	
 	var i;
 
@@ -605,6 +607,8 @@ Loaderator.prototype.addEventListener = function(event, listener, async) {
 			category.checkForAllLoaded();
 		}
 	}
+
+	return this;
 };
 
 var LoaderatorQueue = function(arg) {

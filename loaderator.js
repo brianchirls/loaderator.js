@@ -44,7 +44,7 @@ if (console === undefined) {
 	};
 }
 
-var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[a-zA-Z0-9\&amp;%_\.\/\-~]*)?(\#[a-zA-Z0-9\-_]*)?$/;
+var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[^#]*)?(\#.*)?$/;
 
 function Loaderator(resource, category, listener) {
 	this.categories = {};

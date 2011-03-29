@@ -415,7 +415,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 		return this;
 	}
 	
-	var res, thisResource, catName, cat;
+	var res, thisResource, catNames, cat;
 	var i;
 	var returnResources = [];
 	for (i = 0; i < resources.length; i++) {
@@ -480,21 +480,35 @@ Loaderator.prototype.load = function(resource, category, listener) {
 				thisResource = res;
 			}
 	
-			catName = category || res.category || thisResource.fullUrl;
-			if (catName) {
+			catNames = [];
+			if (category) {
+				catNames.push(category);
+			}
+			
+			if (res.category && res.category !== category) {
+				catNames.push(res.category);
+			}
+			
+			if (!catNames.length) {
+				catNames.push(thisResource.fullUrl);
+			}
+
+			var c, catName;
+			for (c = 0; c < catNames.length; c++) {
+				catName = catNames[c];
 				//set up category if it hasn't been set up yet
 				cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
 				if (thisResource.categories === undefined) { thisResource.categories = []; }
 				thisResource.categories.push(cat);
 				cat.addResource(thisResource);
-		
-				if (thisResource.loader) {
-					//todo: use provided loader function
-				} else if (thisResource.fullUrl) {
-					console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
-					if (this.loaders[thisResource.mode].call(this, thisResource)) {
-						returnResources.push(thisResource);
-					}
+			}
+	
+			if (thisResource.loader) {
+				//todo: use provided loader function
+			} else if (thisResource.fullUrl) {
+				console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
+				if (this.loaders[thisResource.mode].call(this, thisResource)) {
+					returnResources.push(thisResource);
 				}
 			}
 		}
@@ -579,7 +593,7 @@ Loaderator.prototype.addEventListener = function(event, listener, async) {
 			//first, see if this resource has already loaded
 			var resource, res;
 			if (!(resource = category.resourcesById[resourceName])) {
-				for (i = category.resources.length; i >= 0; i--) {
+				for (i = category.resources.length - 1; i >= 0; i--) {
 					res = category.resources[i];
 					if (res !== undefined && res.fullUrl === resourceName) {
 						resource = res;

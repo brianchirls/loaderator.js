@@ -187,6 +187,30 @@ Loaderator.prototype.resolveUrl = function(url) {
 	return base.protocol + '//' + base.host + dir.join('/');
 };
 
+/* Helper function to check if CSS is loaded
+   http://stackoverflow.com/questions/2635814/javascript-capturing-load-event-on-link
+*/
+var CSSload = function(link, callback) {
+    var cssLoaded = false;
+    try{
+        if ( link.sheet && link.sheet.cssRules.length > 0 ){
+            cssLoaded = true;
+        }else if ( link.styleSheet && link.styleSheet.cssText.length > 0 ){
+            cssLoaded = true;
+        }else if ( link.innerHTML && link.innerHTML.length > 0 ){
+            cssLoaded = true;
+        }
+    }
+    catch(ex){ }
+    if ( cssLoaded ){
+        callback();
+    }else{
+        setTimeout(function(){
+            CSSload(link, callback);
+        }, 10);
+    }
+};
+
 Loaderator.prototype.loaders = {
 	script: function(resource) {
 		var that = this;
@@ -232,10 +256,11 @@ Loaderator.prototype.loaders = {
 			var link = document.createElement('link');
 			link.type = resource.mime || 'text/css';
 			link.setAttribute('rel','stylesheet');
-			link.id = resource.id || resource.category.name + '-' + resource.category.resources.length;
+			link.id = resource.id || resource.categories[0].name + '-' + resource.categories[0].resources.length;
 			link.href = resource.fullUrl;
 			resource.element = link;
 			this._head.appendChild(link);
+			/*
 			resource.element.onreadystatechange= function () {
 				if (this.readyState === 'complete' || this.readyState === 4){
 					that.resLoadCallback(resource, this);
@@ -244,6 +269,11 @@ Loaderator.prototype.loaders = {
 			resource.element.onload= function() {
 				that.resLoadCallback(resource, this);
 			};
+			*/
+			//unfortunately, we have to use a timeout here, since there is no onload event for <link>
+			CSSload(link, function() {
+				that.resLoadCallback(resource, this);
+			});
 		}
 		return true;
 	},
@@ -460,6 +490,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 						switch(res.type) {
 							case 'script':
 								res.mode = 'script'; break;
+							case 'style':
 							case 'css':
 								res.mode = 'css'; break;
 							case 'audio':

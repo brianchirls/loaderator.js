@@ -563,7 +563,7 @@ Loaderator.prototype.addEventListener = function(event, listener, async) {
 
 	listener.runAsync = async || false;
 
-	if (event === 'any') {
+	if (event === '*') {
 		this.eventListeners.push(listener);
 	} else {
 		if (typeof event === 'string') {

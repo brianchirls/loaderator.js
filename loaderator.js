@@ -104,9 +104,9 @@ Loaderator.Category.prototype.checkForAllLoaded = function() {
 	for (j--; j >= 0; j--) {
 		listener = listeners.pop();
 		if (listener.async) {
-			setTimeout(makeTimeoutCallback(listener, this.loader,this.resources), 0);
+			setTimeout(makeTimeoutCallback(listener, this.loader,this.resourcesById), 0);
 		} else {
-			listener.call(this.loader,this.resources);
+			listener.call(this.loader,this.resourcesById);
 		}
 	}
 };

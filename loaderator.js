@@ -577,20 +577,18 @@ Loaderator.prototype.resLoadCallback = function(resource, event) {
 	len = resource.categories.length;
 	var listeners;
 	for (i = 0; i < len; i++) {
-		var catListeners, cat, c, l;
+		var catListeners, cat, l;
 		cat = resource.categories[i];
-		for (c = 0; c < len; c++) {
-			catListeners = cat.eventListeners.single;
-			if ( (resource.id && (listeners = catListeners[resource.id])) ||
-				(listeners = catListeners[resource.url]) ||
-				(listeners = catListeners[resource.fullUrl])) {
-				for (l = 0; l < listeners.length; l++) {
-					var listener = listeners[l];
-					if (listener.async) {
-						setTimeout(makeTimeoutCallback(listener, this,resource), 0);
-					} else {
-						listener.call(this,resource);
-					}
+		catListeners = cat.eventListeners.single;
+		if ( (resource.id && (listeners = catListeners[resource.id])) ||
+			(listeners = catListeners[resource.url]) ||
+			(listeners = catListeners[resource.fullUrl])) {
+			for (l = 0; l < listeners.length; l++) {
+				var listener = listeners[l];
+				if (listener.async) {
+					setTimeout(makeTimeoutCallback(listener, this,resource), 0);
+				} else {
+					listener.call(this,resource);
 				}
 			}
 		}

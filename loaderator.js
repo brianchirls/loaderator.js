@@ -306,8 +306,8 @@ Loaderator.prototype.loaders = {
 					obj = document.createElement(resource.type); //either audio or video
 					obj.controls = resource.controls || false;
 					obj.loop = resource.loop || false;
-					obj.preload = resource.preload || false;
-					obj.autobuffer = obj.preload; //deprecated, but just in case we're using an old browser
+					obj.preload = resource.preload || 'auto';
+					obj.autobuffer = obj.preload === undefined ? true : obj.preload; //deprecated, but just in case we're using an old browser
 					obj.doMediaEvents = true;
 					obj.id = resource.id || resource.categories[0].name + '-' + resource.categories[0].resources.length;
 					if (resource.sources) {
@@ -323,6 +323,7 @@ Loaderator.prototype.loaders = {
 						obj.src = resource.fullUrl;
 					}
 					obj.doMediaEvents = true;
+					obj.load();
 					break;
 				case 'image':
 					obj = new Image();

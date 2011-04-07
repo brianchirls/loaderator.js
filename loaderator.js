@@ -447,7 +447,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	}
 	
 	var res, thisResource, catNames, cat;
-	var i;
+	var i, hash;
 	var returnResources = [];
 	for (i = 0; i < resources.length; i++) {
 		res = resources[i];
@@ -463,16 +463,28 @@ Loaderator.prototype.load = function(resource, category, listener) {
 				if (res.fullUrl === undefined) {
 					fullUrl = this.resolveUrl(res.url);
 				}
-				if (thisResource = this.resources[fullUrl]) {
+				hash = '';
+				/*
+					Sometimes we might have multiple resources with the same URL, if they're running in different modes.  For example, WebFonts API requires us to index font resources by URL of the style sheet, and we may want to process that separately as CSS.
+					
+					todo: what happens if we get different resources with the same id?
+				*/
+				if ((thisResource = this.resources[fullUrl]) &&
+					(!res.mode || res.mode === thisResource.mode)) {
 					//this resource already exists.  no duplicates
 					resources[i] = thisResource;
 					
 					//todo: if new resource specifies preload, then go back in to the existing element and pre-load it
 				} else {
 					//this is a new resource
+
+					if (thisResource) {
+						hash = '#' + res.mode;
+					}
+
 					thisResource = res;
 					thisResource.Loaderator = this;
-					this.resources[fullUrl] = thisResource;
+					this.resources[fullUrl + hash] = thisResource;
 					thisResource.fullUrl = fullUrl;
 	
 					if (!res.type) {

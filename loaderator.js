@@ -69,12 +69,12 @@ Loaderator.Category = function(name, loader) {
 };
 
 Loaderator.Category.prototype.addResource = function(resource) {
-	//todo: make sure this is not in here already
-	this.resources.push(resource);
-	if (resource.id) {
-		this.resourcesById[resource.id] = resource;
-	} else {
-		this.resourcesById[resource.url] = resource;
+	//make sure this is not in here already
+	var id = resource.id || resource.url;
+	if (!this.resourcesById[id]) {
+		this.resources.push(resource);
+		this.resourcesById[id] = resource;
+		resource.categories.push(this);
 	}
 };
 
@@ -524,6 +524,19 @@ Loaderator.prototype.load = function(resource, category, listener) {
 			if (!catNames.length) {
 				catNames.push(thisResource.fullUrl);
 			}
+			
+			//make sure there are no duplicate category names. O(2n)
+			//http://www.shamasis.net/2009/09/fast-algorithm-to-find-unique-items-in-javascript-array/
+			if (catNames.length > 1) {
+				var arrayByHash = {}, catIndex, catNamesLength = catNames.length, tmpCatArray = [];
+				for(catIndex=0; catIndex < catNamesLength; catIndex += 1) {
+					arrayByHash[catNames[catIndex]] = catNames[catIndex];
+				}
+				for(catIndex in arrayByHash) {
+					tmpCatArray.push(arrayByHash[catIndex]);
+				}
+				catNames = tmpCatArray;
+			}
 
 			var c, catName;
 			for (c = 0; c < catNames.length; c++) {
@@ -531,7 +544,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 				//set up category if it hasn't been set up yet
 				cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
 				if (thisResource.categories === undefined) { thisResource.categories = []; }
-				thisResource.categories.push(cat);
+				//thisResource.categories.push(cat);
 				cat.addResource(thisResource);
 			}
 	

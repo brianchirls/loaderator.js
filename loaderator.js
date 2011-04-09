@@ -639,7 +639,7 @@ Loaderator.prototype.addEventListener = function(event, listener, async) {
 			event = event.split(':');
 		}
 		var catName = event[0];
-		var category = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName));
+		var category = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
 		
 		var resourceName = event.length > 1 ? event[1] : false;
 		if (resourceName) {

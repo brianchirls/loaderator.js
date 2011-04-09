@@ -46,10 +46,49 @@ if (console === undefined) {
 
 var urlRegex = /^(([A-Za-z]+):\/\/)+(([a-zA-Z0-9\._\-]+\.[a-zA-Z]{2,6})|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3})|localhost)(\:([0-9]+))*(\/[^#]*)?(\#.*)?$/;
 
+/*	We're going to use indexOf later, so let's make sure we have it.
+	from: https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/IndexOf#Compatibility */
+if (!Array.prototype.indexOf) {
+	Array.prototype.indexOf = function(searchElement /*, fromIndex */) {
+		"use strict";
+		
+		if (this === void 0 || this === null) {
+			throw new TypeError();
+		}
+		
+		var t = Object(this);
+		var len = t.length >>> 0;
+		if (len === 0)
+			return -1;
+		
+		var n = 0;
+		if (arguments.length > 0) {
+			n = Number(arguments[1]);
+			if (n !== n) // shortcut for verifying if it's NaN
+				n = 0;
+			else if (n !== 0 && n !== (1 / 0) && n !== -(1 / 0))
+				n = (n > 0 || -1) * Math.floor(Math.abs(n));
+		}
+		
+		if (n >= len)
+			return -1;
+		
+		var k = n >= 0 ? n : Math.max(len - Math.abs(n), 0);
+		
+		for (; k < len; k++) {
+			if (k in t && t[k] === searchElement)
+				return k;
+		}
+		return -1;
+	};
+}
+
 function Loaderator(resource, category, listener) {
 	this.categories = {};
 	this.resources = {};
 	this.eventListeners = [];
+	this.loadingCount = 0;
+	this.callbackQueue = [];
 	this._head = document.getElementsByTagName('head')[0];
 	if (resource) {
 		this.load(resource, category, listener);
@@ -80,6 +119,13 @@ Loaderator.Category.prototype.addResource = function(resource) {
 
 Loaderator.Category.prototype.checkForAllLoaded = function() {
 	var i, j;
+	
+	if (this.loader.loadingCount) {
+		if (this.loader.callbackQueue.indexOf(this) < 0) {
+			this.loader.callbackQueue.push(this);
+		}
+		return;
+	}
 
 	var resources = this.resources;
 	i = resources.length;
@@ -366,6 +412,7 @@ Loaderator.prototype.loaders = {
 		var that = this;
 		_ldr8r_helper.load({
 			url: this.base.protocol + '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js',
+			//url: 'js/webfontloader/target/webfont_debug.js',
 			id: 'webfont-script',
 			type: 'script',
 			mode: 'script'
@@ -437,6 +484,7 @@ Loaderator.prototype.extensionTypes = {
 };
 
 Loaderator.prototype.load = function(resource, category, listener) {
+	this.loadingCount += 1;
 	var resources;
 	if (Object.prototype.toString.call(resource) === '[object Array]') {
 		resources = resource;
@@ -531,23 +579,8 @@ Loaderator.prototype.load = function(resource, category, listener) {
 			
 			if (res.category && res.category !== category) {
 				catNames.push(res.category);
-			}
-			
-			if (!catNames.length) {
+			} else if (!catNames.length) {
 				catNames.push(thisResource.fullUrl);
-			}
-			
-			//make sure there are no duplicate category names. O(2n)
-			//http://www.shamasis.net/2009/09/fast-algorithm-to-find-unique-items-in-javascript-array/
-			if (catNames.length > 1) {
-				var arrayByHash = {}, catIndex, catNamesLength = catNames.length, tmpCatArray = [];
-				for(catIndex=0; catIndex < catNamesLength; catIndex += 1) {
-					arrayByHash[catNames[catIndex]] = catNames[catIndex];
-				}
-				for(catIndex in arrayByHash) {
-					tmpCatArray.push(arrayByHash[catIndex]);
-				}
-				catNames = tmpCatArray;
 			}
 
 			var c, catName;
@@ -573,6 +606,12 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	
 	if (listener !== undefined && Object.prototype.toString.call(listener) === '[object Function]' && category !== undefined) {
 		this.addEventListener(category, listener);
+	}
+	
+	this.loadingCount -= 1;
+	
+	while (this.callbackQueue.length) {
+		cat = this.callbackQueue.splice(0, 1)[0].checkForAllLoaded();
 	}
 	
 	return this;

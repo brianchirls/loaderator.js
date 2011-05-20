@@ -484,7 +484,6 @@ Loaderator.prototype.extensionTypes = {
 };
 
 Loaderator.prototype.load = function(resource, category, listener) {
-	this.loadingCount += 1;
 	var resources;
 	if (Object.prototype.toString.call(resource) === '[object Array]') {
 		resources = resource;
@@ -493,6 +492,8 @@ Loaderator.prototype.load = function(resource, category, listener) {
 	} else {
 		return this;
 	}
+
+	this.loadingCount += 1;
 	
 	var res, thisResource, catNames, cat;
 	var i, hash;

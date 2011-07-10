@@ -365,8 +365,8 @@ Loaderator.prototype.loaders = {
 					obj = document.createElement(resource.type); //either audio or video
 					obj.controls = resource.controls || false;
 					obj.loop = resource.loop || false;
-					obj.preload = resource.preload || 'auto';
-					obj.autobuffer = obj.autobuffer === undefined ? true : obj.autobuffer; //deprecated, but just in case we're using an old browser
+					obj.preload = resource.preload || false;
+					obj.autobuffer = obj.preload; //deprecated, but just in case we're using an old browser
 					obj.doMediaEvents = true;
 					obj.id = resource.id || resource.categories[0].name + '-' + resource.categories[0].resources.length;
 					if (resource.sources) {

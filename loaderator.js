@@ -540,7 +540,7 @@ Loaderator.prototype.load = function(resource, category, listener) {
 
 	this.loadingCount += 1;
 	
-	var res, thisResource, catNames, cat;
+	var res, thisResource, categories, resCategories, cat;
 	var i, hash;
 	var returnResources = [];
 	for (i = 0; i < resources.length; i++) {
@@ -616,35 +616,51 @@ Loaderator.prototype.load = function(resource, category, listener) {
 				}
 			} else if (res.loader) {
 				thisResource = res;
+			} else {
+				thisResource = false;
 			}
 	
-			catNames = [];
+			categories = [];
 			if (category) {
-				catNames.push(category);
+				categories.push(category);
 			}
 			
-			if (res.category && res.category !== category) {
-				catNames.push(res.category);
-			} else if (!catNames.length) {
-				catNames.push(thisResource.fullUrl);
+			var c, catName;
+			if (res.category) {
+				if (Object.prototype.toString.call(res.category) === '[object Array]') {
+					resCategories = res.category;
+				} else {
+					resCategories = [res.category];
+				}
+				for (c = 0; c < resCategories.length; c++) {
+					catName = resCategories[c];
+					if ( categories.indexOf(catName) < 0 ) {
+						categories.push(catName);
+					}
+				}
+			}
+			
+			if (!categories.length) {
+				categories.push(thisResource.fullUrl);
 			}
 
-			var c, catName;
-			for (c = 0; c < catNames.length; c++) {
-				catName = catNames[c];
-				//set up category if it hasn't been set up yet
-				cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
-				if (thisResource.categories === undefined) { thisResource.categories = []; }
-				//thisResource.categories.push(cat);
-				cat.addResource(thisResource);
-			}
-	
-			if (thisResource.loader) {
-				//todo: use provided loader function
-			} else if (thisResource.fullUrl) {
-				console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
-				if (this.loaders[thisResource.mode].call(this, thisResource)) {
-					returnResources.push(thisResource);
+			if (thisResource && categories.length && (thisResource.loader|| thisResource.mode && this.loaders[thisResource.mode])) {
+				for (c = 0; c < categories.length; c++) {
+					catName = categories[c];
+					//set up category if it hasn't been set up yet
+					cat = this.categories[catName] || (this.categories[catName] = new Loaderator.Category(catName, this));
+					if (thisResource.categories === undefined) { thisResource.categories = []; }
+					//thisResource.categories.push(cat);
+					cat.addResource(thisResource);
+				}
+		
+				if (thisResource.loader) {
+					//todo: use provided loader function
+				} else if (thisResource.fullUrl) {
+					console.log('Loaderator: attempting to load ' + thisResource.fullUrl);
+					if (this.loaders[thisResource.mode].call(this, thisResource)) {
+						returnResources.push(thisResource);
+					}
 				}
 			}
 		}

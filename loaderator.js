@@ -297,6 +297,19 @@ Loaderator.prototype.loaders = {
 	},
 
 	css: function(resource) {
+		//make sure not to load the same stylesheet twice
+		var i, max, link;
+		var allLinks = document.getElementsByTagName('link');
+		for (i = 0, max = allLinks.length; i < max; i++) {
+			link = allLinks.item(i);
+			if (link.getAttribute('rel').toLowerCase() === 'stylesheet') {
+				if (link.href === resource.fullUrl) {
+					resource.element = link;
+					break;
+				}
+			}
+		}
+
 		if (!resource.element) {
 			var that = this;
 			var link = document.createElement('link');

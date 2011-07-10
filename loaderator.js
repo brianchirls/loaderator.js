@@ -357,7 +357,7 @@ Loaderator.prototype.loaders = {
 		var obj;
 		var that = this;
 		var i;
-		if (!resource.element) {
+		if (!resource.element || !resource.element.tagName) {
 			switch (resource.type) {
 				//todo: allow multiple 'source' urls for audio and video
 				case 'audio':
@@ -408,6 +408,21 @@ Loaderator.prototype.loaders = {
 				};
 			}
 		} else {
+			//We can accept an existing element to pin our loading event to
+			resource.type = resource.element.tagName.toLowerCase();
+
+			if (resource.type === 'img') {
+				resource.type = 'image';
+			} else if (resource.type === 'iframe') {
+				resource.type = 'html';
+			} else if (resource.type === 'audio' || resource.type === 'video') {
+				resource.element.doMediaEvents = true;
+			} else {
+				//todo: throw error?  or at least a warning
+				console.log('Resource Loader: unknown object type ' + resource.type);
+				return false;
+			}
+
 			obj = resource.element;
 		}
 		if (obj.doMediaEvents) {

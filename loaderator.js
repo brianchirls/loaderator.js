@@ -440,7 +440,6 @@ Loaderator.prototype.loaders = {
 		var that = this;
 		_ldr8r_helper.load({
 			url: this.base.protocol + '//ajax.googleapis.com/ajax/libs/webfont/1/webfont.js',
-			//url: 'js/webfontloader/target/webfont_debug.js',
 			id: 'webfont-script',
 			type: 'script',
 			mode: 'script'
@@ -450,10 +449,28 @@ Loaderator.prototype.loaders = {
 			var i;
 			var familiesToLoad = resource.families.concat([]);
 			console.log(familiesToLoad);
+
+			//only load the css if it hasn't been loaded already
+			var max, link, fullUrl, found = false, urls = [];
+			var allLinks = document.getElementsByTagName('link');
+			for (i = 0, max = allLinks.length; i < max; i++) {
+				link = allLinks.item(i);
+				if (link.getAttribute('rel').toLowerCase() === 'stylesheet') {
+					fullUrl = link.href; //this.resolveUrl(link.getAttribute('href'));
+					if (fullUrl === resource.fullUrl) {
+						found = true;
+						break;
+					}
+				}
+			}
+			if (!found) {
+				urls.push(resource.fullUrl);
+			}
+			
 			WebFont.load({
 				custom: {
 					families: resource.families,
-					urls: [resource.fullUrl]
+					urls: urls
 				},
 				fontactive: function(familyName, fvd) {
 					console.log('fontactive:' + familyName);
